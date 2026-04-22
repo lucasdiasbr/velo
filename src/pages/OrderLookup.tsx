@@ -36,7 +36,7 @@ const colorLabels: Record<ExteriorColor, string> = {
   'midnight-black': 'Midnight Black',
 };
 
-const OrderLookup = () => {
+const ookup = () => {
   const [orderId, setOrderId] = useState('');
   const [searchedOrder, setSearchedOrder] = useState<Order | null>(null);
   const [notFound, setNotFound] = useState(false);
@@ -96,7 +96,6 @@ const OrderLookup = () => {
               </div>
               <Button
                 type="submit"
-                data-testid="search-order-button"
                 className="w-full"
                 disabled={!orderId.trim() || isLoading}
               >
@@ -140,13 +139,12 @@ const OrderLookup = () => {
                   <Package className="w-5 h-5 text-muted-foreground" />
                   <div>
                     <p className="text-sm text-muted-foreground">Pedido</p>
-                    <p className="font-mono font-medium" data-testid="order-result-id">
+                    <p className="font-mono font-medium">
                       {searchedOrder.id}
                     </p>
                   </div>
                 </div>
                 <div
-                  data-testid="order-result-status"
                   className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${
                     searchedOrder.status === 'APROVADO'
                       ? 'bg-green-100 text-green-700'
@@ -244,4 +242,4 @@ const OrderLookup = () => {
   );
 };
 
-export default OrderLookup;
+export default ookup;
