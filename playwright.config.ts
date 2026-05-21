@@ -11,18 +11,26 @@ const isCI =
 // import path from 'path';
 // dotenv.config({ path: path.resolve(__dirname, '.env') });
 
+import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-  
-    // Tempo máximo para cada teste completo (30 segundo é o padrão)
-    timeout: 60_000,
 
-    // Tempo máximo para assertions (toBeVisible(), toHaveText()) 5 segundos
-    expect: {
-      timeout: 5_000 // não vale a pena aumentar porque o teste pode ficar lento no tempo de execução
-    },
+  // Tempo máximo para cada teste completo (30 segundo é o padrão)
+  timeout: 60_000,
+
+  // Tempo máximo para assertions (toBeVisible(), toHaveText()) 5 segundos
+  expect: {
+    timeout: 5_000 // não vale a pena aumentar porque o teste pode ficar lento no tempo de execução
+  },
 
   testDir: './playwright/e2e',
   /* Run tests in files in parallel */
