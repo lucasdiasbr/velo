@@ -40,7 +40,16 @@ export async function insertOrder(order: OrderDetails) {
 export async function deleteOrderByNumber(orderNumber: string) {
   await db.deleteFrom('orders').where('order_number', '=', orderNumber).execute()
 }
-
+// Desafio - Controle de Dados
 export async function deleteOrderByEmail(email: string) {
-  await db.deleteFrom('orders').where('customer_email', '=', email).execute()
+  if (!email?.trim()) {
+    throw new Error('Email is required')
+  }
+
+  const result = await db
+    .deleteFrom('orders')
+    .where('customer_email', '=', email.trim())
+    .executeTakeFirst()
+
+  return result
 }

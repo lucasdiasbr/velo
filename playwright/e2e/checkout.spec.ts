@@ -1,5 +1,4 @@
 import { test, expect } from '../support/fixtures'
-
 import { deleteOrderByEmail } from '../support/database/orderRepository'
 
 test.describe('Checkout', () => {
