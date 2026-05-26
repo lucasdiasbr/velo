@@ -5,7 +5,9 @@ import { createConfiguratorActions } from './actions/configuratorActions'
 import { createOrderLookupActions } from './actions/orderLookupActions'
 import { createHeroActions } from './actions/heroActions'
 
-import { mockCreditAnalysis } from './mock.api'
+import { mocksCreditAnalysis } from './mock.api'
+// Papito, o meu código estava dando alguns erros por causa de algumas implementações com IA - que ficaram diferentes. 
+// Mas gostei de usar o usar ReturnType pra pegar os tipos das actions é inteligente e evita duplicação. 
 
 type App = {
   checkout: ReturnType<typeof createCheckoutActions>
@@ -25,7 +27,7 @@ export const test = base.extend<{ app: App }>({
       orderLookup: createOrderLookupActions(page),
       hero: createHeroActions(page),
       mock: {
-        creditAnalysis: async (score: number) => await mockCreditAnalysis(page, score),
+        creditAnalysis: async (score: number) => await mocksCreditAnalysis(page, score),
       }
     }
     await use(app)
