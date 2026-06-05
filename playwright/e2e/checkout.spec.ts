@@ -10,6 +10,7 @@ test.describe('Checkout', () => {
         let alerts: any
 
         test.beforeEach(async ({ page, app }) => {
+            //Emplementação mais abançaa pra a chamada da page. 
             await page.goto('/order')
             await expect(page.getByRole('heading', { name: 'Finalizar Pedido' })).toBeVisible()
 
