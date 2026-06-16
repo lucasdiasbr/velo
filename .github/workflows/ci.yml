@@ -10,6 +10,7 @@ on:
 
 env:
   NODE_VERSION: '24'
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
   unit-tests:
@@ -56,6 +57,12 @@ jobs:
 
       - name: Build for Vercel
         run: yarn vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
       - name: Deploy preview
-        run: yarn vercel deploy --prebuilt --target=preview --token=${{ secrets.VERCEL_TOKEN }} --scope=lucas-dias-br-projects
+        run: yarn vercel deploy --prebuilt --target=preview --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
