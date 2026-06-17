@@ -40,9 +40,14 @@ jobs:
     needs: [unit-tests]
     runs-on: ubuntu-latest
 
+    outputs:
+      deployment-url: ${{ steps.deploy.outputs.deployment-url }}
+
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+      VERCEL_SCOPE: lucas-dias-br-projects
 
     steps:
       - name: Checkout repository
@@ -60,10 +65,48 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Pull Vercel project settings
-        run: yarn vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        run: yarn vercel pull --yes --environment=preview --token=$VERCEL_TOKEN
 
-      - name: Build for Vercel
-        run: yarn vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Vercel
+        run: yarn vercel build --token=$VERCEL_TOKEN
 
       - name: Deploy preview
-        run: yarn vercel deploy --prebuilt --target=preview --token=${{ secrets.VERCEL_TOKEN }}
+        id: deploy
+        run: |
+          URL=$(yarn vercel deploy --prebuilt --target=preview --token=$VERCEL_TOKEN --scope=$VERCEL_SCOPE)
+          echo "deployment-url=$URL" >> $GITHUB_OUTPUT
+
+  e2e-tests:
+    name: Run E2E Tests
+    needs: [build-and-deploy]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Install dependencies
+        run: yarn install
+
+      - name: Install Playwright Browser
+        run: yarn playwright install --with-deps chromium
+
+      - name: Run E2E Regression Tests
+        run: yarn playwright test playwright/e2e/online.spec.ts
+        env:
+          BASE_URL: ${{ needs.build-and-deploy.outputs.deployment-url }}
+
+      - name: Upload Playwright report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report
