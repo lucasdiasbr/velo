@@ -9,7 +9,7 @@ on:
       - main
 
 env:
-  NODE_VERSION: '24'
+  NODE_VERSION: '24.15.0'
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
 jobs:
@@ -80,9 +80,6 @@ jobs:
     name: Run E2E Tests
     needs: [build-and-deploy]
     runs-on: ubuntu-latest
-
-    env:
-      NODE_VERSION: '24.15.0'
 
     steps:
       - name: Checkout repository
