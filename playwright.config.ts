@@ -30,7 +30,8 @@ export default defineConfig({
     baseURL: process.env.BASE_URL || 'http://localhost:5173',
     trace: 'on-first-retry',
     actionTimeout: 5_000,
-    navigationTimeout: 10_000
+    navigationTimeout: 10_000,
+    screenshot: 'on'
   },
 
   projects: [
