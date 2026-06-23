@@ -1,6 +1,5 @@
 # Workflow de Entrega Contínua: testes unitários, build, deploy preview, e2e e promoção para produção.
 
-
 name: Continuous Deployment
 
 on:
@@ -111,6 +110,10 @@ jobs:
         run: yarn playwright test playwright/e2e/online.spec.ts
         env:
           BASE_URL: ${{ needs.build-and-deploy.outputs.deployment-url }}
+
+      - name: Upload results to TestDino
+        if: ${{ !cancelled() }}
+        run: npx tdpw upload ./playwright-report --token=${{ secrets.TESTDINO_TOKEN }} --upload-html
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
