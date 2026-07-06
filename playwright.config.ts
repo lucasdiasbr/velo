@@ -24,7 +24,10 @@ export default defineConfig({
   forbidOnly: isCI,
   retries: isCI ? 2 : 0,
   workers: isCI ? 1 : undefined,
-  reporter: 'html',
+  reporter: [
+    ['html', { outputFolder: './playwright-report', open: 'never' }],
+    ['json', { outputFile: './playwright-report/report.json' }],
+  ],
 
   use: {
     baseURL: process.env.BASE_URL || 'http://localhost:5173',
