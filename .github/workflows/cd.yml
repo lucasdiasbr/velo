@@ -107,7 +107,7 @@ jobs:
         run: yarn playwright install --with-deps chromium
 
       - name: Run E2E Regression Tests
-        run: yarn playwright test playwright/e2e/online.spec.ts
+        run: yarn playwright test playwright/e2e/
         env:
           BASE_URL: ${{ needs.build-and-deploy.outputs.deployment-url }}
 
