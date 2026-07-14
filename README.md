@@ -158,3 +158,32 @@ npm run dev      # Desenvolvimento
 npm run build    # Build de produção
 npm run lint     # Verificar código
 ```
+
+---
+
+## 🏆 Desafio Final — Ambiente de Preview com Banco Isolado
+
+Este projeto foi configurado com ambientes isolados de Preview e Produção, impedindo a poluição do banco de dados de produção por execuções de testes E2E ou acessos a deploys de preview.
+
+### Resolução e Racional de Decisão
+
+#### 1. Por que não utilizar `vercel promote`?
+* O comando `vercel promote` apenas aponta o tráfego do domínio de produção para o build existente gerado em preview, sem recompilar o código.
+* Como o projeto utiliza Vite, as variáveis de ambiente prefixadas com `VITE_` (como as credenciais do Supabase) são embutidas diretamente como strings literais no bundle Javascript final no momento do build.
+* Se promovêssemos o build de preview diretamente, a aplicação em produção continuaria se comunicando com o **Supabase de Preview**.
+* **Solução Adotada:** Ajustamos o pipeline no `.github/workflows/cd.yml` substituindo o job de `promote` por um job de `deploy-production`. Ele realiza um `vercel pull --environment=production` seguido de `vercel build --prod` e `vercel deploy --prebuilt --prod`. Isso gera um novo bundle com as variáveis do Supabase de produção injetadas corretamente no build final de produção.
+
+#### 2. Migração para o Supabase Client nos Testes E2E
+* Substituímos a dependência do PostgreSQL direto (Kysely) em `playwright/support/database/orderRepository.ts` e configuramos o cliente administrativo do Supabase (`db`) em `database.ts` usando a `SUPABASE_SERVICE_ROLE_KEY`.
+* A utilização do cliente PostgREST do Supabase via HTTPS elimina a necessidade de conexões TCP diretas ao banco de dados via IPv6 ou pools de conexão em ambientes CI/CD, simplificando a infraestrutura de automação de testes.
+
+### Como Rodar os Testes E2E Localmente com Banco de Preview
+
+1. Adicione a chave Service Role do Supabase de Preview no seu arquivo `.env` local:
+   ```env
+   SUPABASE_SERVICE_ROLE_KEY="sua_chave_service_role_de_preview"
+   ```
+2. Execute o comando dos testes do Playwright:
+   ```bash
+   npx playwright test
+   ```

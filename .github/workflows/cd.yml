@@ -110,6 +110,8 @@ jobs:
         run: yarn playwright test playwright/e2e/
         env:
           BASE_URL: ${{ needs.build-and-deploy.outputs.deployment-url }}
+          VITE_SUPABASE_URL: ${{ secrets.PREVIEW_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.PREVIEW_SUPABASE_SERVICE_ROLE_KEY }}
 
       - name: Upload results to TestDino
         if: ${{ !cancelled() }}

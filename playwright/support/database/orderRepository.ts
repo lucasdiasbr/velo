@@ -33,23 +33,35 @@ export async function insertOrder(order: OrderDetails) {
     updated_at: new Date().toISOString(),
     optionals: [],
   }
-  // If the record exists it might throw a duplicate error, but we manage teardown.
-  await db.insertInto('orders').values(data).execute()
+
+  const { error } = await db.from('orders').insert(data)
+  if (error) {
+    throw error
+  }
 }
 
 export async function deleteOrderByNumber(orderNumber: string) {
-  await db.deleteFrom('orders').where('order_number', '=', orderNumber).execute()
+  const { error } = await db.from('orders').delete().eq('order_number', orderNumber)
+  if (error) {
+    throw error
+  }
 }
+
 // Desafio - Controle de Dados
 export async function deleteOrderByEmail(email: string) {
   if (!email?.trim()) {
     throw new Error('Email is required')
   }
 
-  const result = await db
-    .deleteFrom('orders')
-    .where('customer_email', '=', email.trim())
-    .executeTakeFirst()
+  const { data, error } = await db
+    .from('orders')
+    .delete()
+    .eq('customer_email', email.trim())
+    .select()
 
-  return result
+  if (error) {
+    throw error
+  }
+
+  return data
 }
